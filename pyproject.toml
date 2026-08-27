@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "es-tfbu"
+version = "0.1.0"
+description = "esTFBU: reusable has-ChIP-seq and no-ChIP-seq (ChromBPNet) TFBS-context enhancer modelling pipeline branches, reproducing and extending Li et al. 2025 (Nat Commun)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = [
+    "torch",
+    "numpy",
+    "pandas",
+    "pyyaml",
+    "h5py",
+    "numba",
+    "pyfaidx",
+    "python-Levenshtein",
+    "scikit-learn",
+    "scipy",
+    "bpnet-lite",
+    "tangermeme",
+    "requests",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

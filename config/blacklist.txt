@@ -1,0 +1,8 @@
+# TF blacklist — one TF name per line, case-sensitive, must match names used
+# in Supplementary_Data_10_used_PFM_IDs.xlsx / all_TF_list.pkl.
+# Lines starting with # are comments and ignored.
+# Any TF listed here will be refused by run_pipeline.py before any
+# data prep, training, or design work starts.
+#
+# Example (uncomment to actually block it):
+# TP53

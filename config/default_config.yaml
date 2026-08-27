@@ -1,0 +1,108 @@
+# Global config for esTFBU. Everything path/species-specific
+# that used to be hardcoded inside the paper's scripts lives here instead.
+#
+# All paths below are relative to the repo root (resolved automatically by
+# load_config's _resolve_relative_paths, regardless of what directory you
+# run from) -- see README.md's "Data setup" section for what goes where
+# under data/ (all gitignored, ~22GB, not bundled -- see
+# config/quickstart_config.yaml for the small bundled demo instead).
+
+species: human
+genome_fasta: data/hg38/hg38.fa
+
+# root of the cloned DeepTFBU repo (paper's own PPM matrices / model
+# architecture code that we import from, not modify)
+deeptfbu_repo: data/DeepTFBU_repo
+
+# where this package writes/reads all generated data + trained models
+work_dir: estfbu_workdir
+
+# paper's pretrained HepG2 weights (198 TFs, one replicate, from Zenodo
+# 10.5281/zenodo.10931825) -- read-only, never written to
+hepg2_pretrained_weights_dir: data/model_weights/train_0
+
+blacklist_file: config/blacklist.txt
+
+# raw ChIP-seq/ATAC-seq/histone bed files per cell type, keyed by cell type
+# name. Only cell types listed here can be used -- add a new cell type by
+# adding its bed file paths here, nothing else in the code needs to change.
+cell_types:
+  HepG2:
+    atac_bed: data/DeepTFBU_repo/0_prepare_training_sample/data_dir/HepG2_ATAC.bed
+    h3k4me1_bed: data/DeepTFBU_repo/0_prepare_training_sample/data_dir/HepG2_H3K4me1.bed
+    h3k4me3_bed: data/DeepTFBU_repo/0_prepare_training_sample/data_dir/HepG2_H3K4me3.bed
+    chip_bed_dir: data/DeepTFBU_repo/0_prepare_training_sample/data_dir
+    # HepG2 has paper-pretrained weights, so no from-scratch training needed
+    pretrained: true
+  K562:
+    atac_bed: data/DeepTFBU_repo/2_specific_enhancer/0_prepare_data_for_K562/data_dir/K562_ATAC.bed
+    h3k4me1_bed: data/DeepTFBU_repo/2_specific_enhancer/0_prepare_data_for_K562/data_dir/K562_H3K4me1.bed
+    h3k4me3_bed: data/DeepTFBU_repo/2_specific_enhancer/0_prepare_data_for_K562/data_dir/K562_H3K4me3.bed
+    chip_bed_dir: data/DeepTFBU_repo/2_specific_enhancer/0_prepare_data_for_K562/data_dir
+    pretrained: false
+
+# Pretrained ChromBPNet models (no-ChIP-seq branch), from Kundaje lab /
+# ENCODE project (https://huggingface.co/kundajelab), trained on the SAME
+# ATAC-seq experiments (ENCSR042AWH for HepG2, ENCSR483RKN for K562) listed
+# in the paper's own Supplementary Data 11. Using fold_0's "nobias" variant
+# (bias-corrected, appropriate for TF-motif-driven accessibility signal --
+# see chrombpnet_scoring.py docstring). Not trained by us; downloaded as-is.
+chrombpnet_models:
+  HepG2:
+    nobias_h5: data/chrombpnet_models/HepG2/nobias_fold0.h5
+    encode_accession: ENCSR042AWH
+  K562:
+    nobias_h5: data/chrombpnet_models/K562/nobias_fold0.h5
+    encode_accession: ENCSR483RKN
+
+# RNA-seq expression (ENCODE polyA+ RNA-seq, GRCh38, standard untreated
+# whole-cell experiments -- see expression.py docstring for accession
+# provenance) and the TF-symbol -> Ensembl-gene-ID mapping it needs.
+rna_seq:
+  HepG2:
+    gene_quantifications_tsv: data/rna_seq/HepG2/ENCFF640ZBJ.tsv
+    encode_accession: ENCSR329MHM
+  K562:
+    gene_quantifications_tsv: data/rna_seq/K562/ENCFF179CNW.tsv
+    encode_accession: ENCSR000EYO
+tf_to_ensembl_map: data/processed/tf_to_ensembl.json
+
+# JASPAR PFM IDs (TF name -> JASPAR matrix ID), same 198-TF list the paper used
+tf_pfm_map: data/processed/tf_pfm_ids.csv
+# actual fetched PFM count matrices, keyed by TF name (built via archive/scripts/02_fetch_jaspar_pfms.py)
+jaspar_pfm_cache: data/processed/jaspar_pfms.json
+
+model:
+  seq_len: 168
+  growth_rate: 32
+  block_config: [2, 2, 4, 2]
+  num_init_features: 400
+  bn_size: 4
+  drop_rate: 0.2
+
+training:
+  batch_size: 128
+  lr: 0.001
+  max_epochs: 1000
+  early_stopping_patience: 30
+  train_val_test_split: [0.8, 0.1, 0.1]
+  random_seed: 42
+  cpu_threads: 14   # leave 1 core free; see notes in README about battery/thermal
+
+genetic_algorithm:
+  max_pool_size: 2000
+  n_iterations: 300
+  pct_new: 0.3
+  pct_elite: 0.3
+
+postprocess:
+  n_final_sequences: 100
+  # fraction of sequence length, not an absolute base count -- shared by
+  # the 168bp (has-ChIP-seq) and 2114bp (no-ChIP-seq/ChromBPNet) branches,
+  # so a fixed absolute threshold would mean a real diversity requirement
+  # at one scale and a trivially-always-passing one at the other. 0.30
+  # matches the ~50bp/168bp threshold this pipeline was originally tuned
+  # and validated against.
+  edit_distance_fraction: 0.30
+  gc_content_tolerance: 0.10
+  restriction_sites: ["GCGATCGC", "CGCTAGCG"]

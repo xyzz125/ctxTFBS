@@ -1,0 +1,119 @@
+# Quickstart config -- every path here (except the genome) points at
+# sample_data/, real (not synthetic) ENCODE/JASPAR/Zenodo-derived data
+# bundled directly in this repo so the pipeline runs immediately after
+# `git clone`, no external downloads except the one human genome FASTA
+# (a generic public resource, not project-specific -- same one command
+# documented in README.md's Quickstart section).
+#
+# All paths below are relative to the repo root (resolved automatically
+# by load_config, regardless of what directory you run from). This is a
+# smaller, faster demo dataset -- see EXPECTED_OUTPUTS.md for what each
+# scenario actually produces on it, and ref_result/RESULTS.md for the
+# full-scale validated numbers this config is NOT meant to reproduce.
+quickstart: true
+
+species: human
+genome_fasta: data/hg38/hg38.fa
+
+# stub containing just SeqRegressionModel.py (the paper's model
+# architecture code, unmodified) at the subpath models.py expects --
+# not the full ~1.6GB DeepTFBU_repo clone, which quickstart doesn't need.
+deeptfbu_repo: sample_data/deeptfbu_stub
+
+# separate from estfbu_workdir/ (the full-scale run's cache) so
+# the two never mix cached intermediates from different data sources.
+work_dir: estfbu_workdir_quickstart
+
+# only 2 of the paper's 198 TFs are bundled (GATA2, HNF4A) -- the only
+# two with a bundled ChIP-seq bed to have been trained on in the first
+# place. Any other TF fails with a clear FileNotFoundError, same as the
+# full config would for a TF the paper never published.
+hepg2_pretrained_weights_dir: sample_data/model_weights
+
+blacklist_file: config/blacklist.txt
+
+cell_types:
+  HepG2:
+    atac_bed: sample_data/beds/HepG2_ATAC.bed
+    h3k4me1_bed: sample_data/beds/HepG2_H3K4me1.bed
+    h3k4me3_bed: sample_data/beds/HepG2_H3K4me3.bed
+    chip_bed_dir: sample_data/beds
+    pretrained: true
+  K562:
+    atac_bed: sample_data/beds/K562_ATAC.bed
+    h3k4me1_bed: sample_data/beds/K562_H3K4me1.bed
+    h3k4me3_bed: sample_data/beds/K562_H3K4me3.bed
+    chip_bed_dir: sample_data/beds
+    # no bundled K562 weight -- quickstart's specificity scenario trains
+    # this one from scratch on the bundled data, deliberately
+    # demonstrating that pathway too, not just the pretrained one.
+    pretrained: false
+
+chrombpnet_models:
+  HepG2:
+    nobias_h5: sample_data/chrombpnet_models/HepG2/nobias_fold0.h5
+    encode_accession: ENCSR042AWH
+  K562:
+    nobias_h5: sample_data/chrombpnet_models/K562/nobias_fold0.h5
+    encode_accession: ENCSR483RKN
+
+rna_seq:
+  HepG2:
+    gene_quantifications_tsv: sample_data/rna_seq/HepG2/ENCFF640ZBJ.tsv
+    encode_accession: ENCSR329MHM
+  K562:
+    gene_quantifications_tsv: sample_data/rna_seq/K562/ENCFF179CNW.tsv
+    encode_accession: ENCSR000EYO
+tf_to_ensembl_map: data/processed/tf_to_ensembl.json
+
+tf_pfm_map: data/processed/tf_pfm_ids.csv
+jaspar_pfm_cache: data/processed/jaspar_pfms.json
+
+# pre-computed full-genome ChromBPNet scan (165k regions x 2 cell types)
+# so the 'screen' scenario (rank all 198 TFs genome-wide) works
+# immediately instead of needing the ~90min scan run first. Copied into
+# work_dir/results/ automatically the first time 'screen' runs if not
+# already there -- see run_pipeline.py's screen action.
+precomputed_genome_scan: sample_data/precomputed/chrombpnet_full_genome_scan_hepg2_atac_peaks.csv
+
+model:
+  seq_len: 168
+  growth_rate: 32
+  block_config: [2, 2, 4, 2]
+  num_init_features: 400
+  bn_size: 4
+  drop_rate: 0.2
+
+training:
+  batch_size: 128
+  lr: 0.001
+  # quickstart preset -- far fewer epochs than the full config's 1000.
+  # A from-scratch train (any non-pretrained cell type, e.g. K562's
+  # specificity scenario) automatically uses MPS (Apple Silicon GPU) when
+  # available -- measured ~11x faster than CPU for this architecture
+  # (BiLSTM layers are the CPU bottleneck). On CPU-only hardware (no MPS,
+  # e.g. Linux without CUDA) this WILL be slow -- DeepTFBU's own README
+  # says the same about this architecture: "we strongly recommend running
+  # this program on a computer with a GPU... otherwise it will take an
+  # extremely long time." See README's System Requirements.
+  max_epochs: 15
+  early_stopping_patience: 5
+  train_val_test_split: [0.8, 0.1, 0.1]
+  random_seed: 42
+  cpu_threads: 14
+
+genetic_algorithm:
+  max_pool_size: 200
+  # quickstart preset: far fewer than the full config's 300, so design
+  # finishes in minutes. See EXPECTED_OUTPUTS.md for real measured output.
+  n_iterations: 20
+  pct_new: 0.3
+  pct_elite: 0.3
+
+postprocess:
+  n_final_sequences: 100
+  # fraction of sequence length, not an absolute base count -- see
+  # default_config.yaml's comment for why (shared by 168bp and 2114bp branches)
+  edit_distance_fraction: 0.30
+  gc_content_tolerance: 0.10
+  restriction_sites: ["GCGATCGC", "CGCTAGCG"]

@@ -1,0 +1,273 @@
+<svg width="1450" height="1280" viewBox="0 0 1450 1280" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>esTFBU pipeline overview</title>
+<desc>Illustrated walk through the questions every run answers. Has-ChIP-seq (left): specify a TF or not -- specifying always leads to design (fix part of a starting sequence, then activity and specificity both run automatically); not specifying always leads to ranking all candidates. No-ChIP-seq (right) is less symmetric: specifying a TF offers score (scores existing ATAC regions directly, no starting sequence or target question) or design (same fix-sequence/activity-specificity steps as the left branch, using a ChIP-seq-free gradient-based motif-importance proxy); not specifying a TF offers design (raw accessibility, same shared design output) or screen (ranks all candidates, converging with the left branch's no-TF path). Five real output types: designed sequences (either branch), scored regions (no-ChIP-seq score action only), ranked candidates with a bubble plot (either branch's ranking path), and an optional esMPRA-shaped oligo library (terminal wet-lab handoff step off either branch's designed-sequences output).</desc>
+<defs>
+<marker id="ov-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<style>
+text{font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+.title{font-size:19px;font-weight:700;fill:#1a1a1a}
+.subtitle{font-size:11.5px;fill:#6b6b68}
+.stage{font-size:11px;font-weight:700;letter-spacing:0.05em;fill:#8a8985}
+.th{font-size:12px;font-weight:600;fill:#1a1a1a}
+.ts{font-size:9.5px;fill:#5f5f5f}
+.tss{font-size:8.5px;fill:#7a7a77}
+.arr{stroke:#9a9a97;stroke-width:1.6;fill:none;marker-end:url(#ov-arrow)}
+.c-gray{fill:#F1EFE8;stroke:#8a8985}
+.c-gray .th{fill:#2C2C2A}
+.c-gray .ts{fill:#5a5a57}
+.c-blue{fill:#E6F1FB;stroke:#378ADD}
+.c-blue .th{fill:#0C447C}
+.c-blue .ts{fill:#185FA5}
+.c-teal{fill:#E1F5EE;stroke:#5DCAA5}
+.c-teal .th{fill:#085041}
+.c-teal .ts{fill:#0F6E56}
+.c-purple{fill:#F1E9FB;stroke:#9B72D8}
+.c-purple .th{fill:#4B2E82}
+.c-purple .ts{fill:#63409E}
+.c-amber{fill:#FBF0DD;stroke:#D89B3C}
+.c-amber .th{fill:#7A4F0C}
+.c-amber .ts{fill:#8F6318}
+</style>
+
+<text class="title" x="725" y="28" text-anchor="middle">esTFBU: context-driven transcription-factor-binding-site design</text>
+<text class="subtitle" x="725" y="45" text-anchor="middle">Every run answers the same first two questions, in order -- what happens after differs by branch, shown here as-is, not simplified</text>
+
+<!-- ============ 1. HAS CHIP-SEQ DATA? ============ -->
+<text class="stage" x="725" y="70" text-anchor="middle">1. IS CHIP-SEQ DATA AVAILABLE?</text>
+
+<line x1="60" y1="132" x2="330" y2="132" stroke="#c9c7c0" stroke-width="2"/>
+<text class="tss" x="52" y="104" text-anchor="end">ChIP</text>
+<rect x="75" y="86" width="6" height="20" fill="#378ADD"/>
+<rect x="98" y="94" width="6" height="12" fill="#378ADD"/>
+<rect x="125" y="80" width="6" height="26" fill="#378ADD"/>
+<rect x="160" y="90" width="6" height="16" fill="#378ADD"/>
+<rect x="200" y="84" width="6" height="22" fill="#378ADD"/>
+<rect x="235" y="92" width="6" height="14" fill="#378ADD"/>
+<rect x="270" y="82" width="6" height="24" fill="#378ADD"/>
+<text class="tss" x="52" y="129" text-anchor="end">ATAC</text>
+<rect x="70" y="116" width="6" height="14" fill="#9cc7ec"/>
+<rect x="105" y="112" width="6" height="18" fill="#9cc7ec"/>
+<rect x="145" y="118" width="6" height="12" fill="#9cc7ec"/>
+<rect x="180" y="110" width="6" height="20" fill="#9cc7ec"/>
+<rect x="220" y="115" width="6" height="15" fill="#9cc7ec"/>
+<rect x="260" y="112" width="6" height="18" fill="#9cc7ec"/>
+<rect x="300" y="119" width="6" height="11" fill="#9cc7ec"/>
+<g class="c-blue">
+<rect x="40" y="142" width="310" height="34" rx="8" stroke-width="0.6"/>
+<text class="th" x="195" y="160" text-anchor="middle" dominant-baseline="central">Has ChIP-seq</text>
+</g>
+
+<line x1="920" y1="132" x2="1190" y2="132" stroke="#c9c7c0" stroke-width="2"/>
+<text class="tss" x="912" y="129" text-anchor="end">ATAC</text>
+<rect x="935" y="112" width="6" height="18" fill="#5DCAA5"/>
+<rect x="965" y="106" width="6" height="24" fill="#5DCAA5"/>
+<rect x="1000" y="116" width="6" height="14" fill="#5DCAA5"/>
+<rect x="1035" y="104" width="6" height="26" fill="#5DCAA5"/>
+<rect x="1075" y="110" width="6" height="20" fill="#5DCAA5"/>
+<rect x="1110" y="118" width="6" height="12" fill="#5DCAA5"/>
+<rect x="1150" y="107" width="6" height="23" fill="#5DCAA5"/>
+<g class="c-teal">
+<rect x="900" y="142" width="310" height="34" rx="8" stroke-width="0.6"/>
+<text class="th" x="1055" y="160" text-anchor="middle" dominant-baseline="central">No ChIP-seq</text>
+</g>
+
+<line class="arr" x1="195" y1="176" x2="195" y2="204" stroke="#378ADD"/>
+<line class="arr" x1="1055" y1="176" x2="1055" y2="204" stroke="#0F6E56"/>
+
+<!-- ============ 2. SPECIFY A TF? ============ -->
+<text class="stage" x="725" y="200" text-anchor="middle">2. SPECIFY A TF?</text>
+
+<g class="c-gray">
+<rect x="40" y="208" width="310" height="34" rx="8" stroke-width="0.6"/>
+<text class="th" x="195" y="226" text-anchor="middle" dominant-baseline="central">Specify a TF?</text>
+</g>
+<g class="c-gray">
+<rect x="900" y="208" width="310" height="34" rx="8" stroke-width="0.6"/>
+<text class="th" x="1055" y="226" text-anchor="middle" dominant-baseline="central">Specify a TF?</text>
+</g>
+
+<!-- left: yes always -> design; no always -> rank -->
+<path class="arr" d="M120 242 L100 274" stroke="#378ADD"/>
+<text class="ts" x="80" y="262" text-anchor="middle">yes</text>
+<path class="arr" d="M280 242 L490 322" stroke="#9a9a97"/>
+<text class="ts" x="330" y="264" text-anchor="middle">no</text>
+<text class="tss" x="195" y="262" text-anchor="middle" fill="#185FA5">(always leads to design --</text>
+<text class="tss" x="195" y="272" text-anchor="middle" fill="#185FA5">no score-only option here)</text>
+
+<!-- right: yes -> score or design; no -> design or screen -->
+<path class="arr" d="M1000 242 L960 270" stroke="#0F6E56"/>
+<text class="ts" x="960" y="258" text-anchor="middle">no</text>
+<path class="arr" d="M1080 242 L1135 270" stroke="#0F6E56"/>
+<text class="ts" x="1120" y="258" text-anchor="middle">yes</text>
+
+<g class="c-gray">
+<rect x="900" y="274" width="140" height="42" rx="8" stroke-width="0.6"/>
+<text class="th" x="970" y="288" text-anchor="middle" dominant-baseline="central">no TF given</text>
+<text class="ts" x="970" y="302" text-anchor="middle" dominant-baseline="central">design or screen?</text>
+</g>
+<g class="c-gray">
+<rect x="1060" y="274" width="150" height="42" rx="8" stroke-width="0.6"/>
+<text class="th" x="1135" y="288" text-anchor="middle" dominant-baseline="central">TF given</text>
+<text class="ts" x="1135" y="302" text-anchor="middle" dominant-baseline="central">score or design?</text>
+</g>
+
+<path class="arr" d="M940 316 L960 350" stroke="#0F6E56"/>
+<text class="ts" x="918" y="336" text-anchor="middle">design</text>
+<path class="arr" d="M900 316 L700 342" stroke="#9a9a97"/>
+<text class="ts" x="850" y="322" text-anchor="middle">screen</text>
+<path class="arr" d="M1100 316 L1010 350" stroke="#0F6E56"/>
+<text class="ts" x="1088" y="336" text-anchor="middle">design</text>
+<path class="arr" d="M1200 316 L1300 350" stroke="#0F6E56"/>
+<text class="ts" x="1255" y="336" text-anchor="middle">score</text>
+
+<!-- shared "no TF / screen" ranking detour, fed from both branches -->
+<g class="c-gray">
+<rect x="470" y="342" width="310" height="56" rx="9" stroke-width="0.6"/>
+<text class="th" x="625" y="360" text-anchor="middle" dominant-baseline="central">Rank all candidate TFs</text>
+<text class="ts" x="625" y="378" text-anchor="middle" dominant-baseline="central">by motif enrichment / accessibility --</text>
+<text class="ts" x="625" y="390" text-anchor="middle" dominant-baseline="central">has-ChIP-seq "no TF", or no-ChIP-seq "screen"</text>
+</g>
+<line class="arr" x1="625" y1="398" x2="625" y2="924" stroke="#9a9a97"/>
+
+<!-- far-right lane: no-ChIP-seq "score", which skips fix-sequence and activity/specificity entirely -->
+<g class="c-gray">
+<rect x="1230" y="350" width="200" height="150" rx="10" stroke-width="0.6"/>
+<text class="th" x="1330" y="372" text-anchor="middle">score (no TF's design steps)</text>
+<text class="ts" x="1330" y="392" text-anchor="middle">scores existing ATAC regions</text>
+<text class="ts" x="1330" y="404" text-anchor="middle">directly -- nothing is designed</text>
+<text class="tss" x="1330" y="426" text-anchor="middle">no starting sequence, no fixed</text>
+<text class="tss" x="1330" y="437" text-anchor="middle">positions, no target question --</text>
+<text class="tss" x="1330" y="448" text-anchor="middle">always computes both cell types'</text>
+<text class="tss" x="1330" y="459" text-anchor="middle">scores + their difference in one pass</text>
+<text class="tss" x="1330" y="481" text-anchor="middle">optionally re-ranked by the given</text>
+<text class="tss" x="1330" y="492" text-anchor="middle">TF's own motif match strength</text>
+</g>
+<line class="arr" x1="1330" y1="500" x2="1330" y2="924" stroke="#9a9a97"/>
+
+<!-- ============ 3. FIXED STARTING SEQUENCE? (design path only) ============ -->
+<text class="stage" x="195" y="388" text-anchor="middle">3. FIX PART OF A STARTING SEQUENCE?</text>
+<text class="stage" x="1055" y="388" text-anchor="middle">3. FIX PART OF A STARTING SEQUENCE? (design only)</text>
+
+<g class="c-gray">
+<rect x="40" y="396" width="310" height="112" rx="10" stroke-width="0.6"/>
+</g>
+<text class="ts" x="195" y="416" text-anchor="middle">optional -- mark positions to protect</text>
+<rect x="65" y="430" width="70" height="18" fill="#9cc7ec" stroke="#378ADD" stroke-width="0.5"/>
+<rect x="135" y="430" width="90" height="18" fill="none" stroke="#378ADD" stroke-width="1.3" stroke-dasharray="3,2"/>
+<rect x="225" y="430" width="70" height="18" fill="#9cc7ec" stroke="#378ADD" stroke-width="0.5"/>
+<text class="tss" x="180" y="442" text-anchor="middle" fill="#0C447C">fixed (lowercase)</text>
+<text class="tss" x="195" y="466" text-anchor="middle">TF's own core motif is always fixed too --</text>
+<text class="tss" x="195" y="478" text-anchor="middle">this is on top of that, for anything else you</text>
+<text class="tss" x="195" y="490" text-anchor="middle">already know matters (e.g. a known element)</text>
+
+<g class="c-teal">
+<rect x="900" y="396" width="310" height="112" rx="10" stroke-width="0.6"/>
+</g>
+<text class="ts" x="1055" y="416" text-anchor="middle">optional -- mark positions to protect</text>
+<rect x="925" y="430" width="70" height="18" fill="#bfe9d8" stroke="#5DCAA5" stroke-width="0.5"/>
+<rect x="995" y="430" width="90" height="18" fill="none" stroke="#5DCAA5" stroke-width="1.3" stroke-dasharray="3,2"/>
+<rect x="1085" y="430" width="70" height="18" fill="#bfe9d8" stroke="#5DCAA5" stroke-width="0.5"/>
+<text class="tss" x="1040" y="442" text-anchor="middle" fill="#085041">fixed (lowercase)</text>
+<text class="tss" x="1055" y="466" text-anchor="middle">no core motif is auto-masked here (ChromBPNet</text>
+<text class="tss" x="1055" y="478" text-anchor="middle">isn't per-TF) -- mark manually, or auto-detect by</text>
+<text class="tss" x="1055" y="490" text-anchor="middle">gradient importance (opt-in, unioned with marks)</text>
+
+<line class="arr" x1="195" y1="508" x2="195" y2="536" stroke="#378ADD"/>
+<line class="arr" x1="1055" y1="508" x2="1055" y2="536" stroke="#0F6E56"/>
+
+<!-- ============ 4. ACTIVITY OR SPECIFICITY? (design path only) ============ -->
+<text class="stage" x="195" y="552" text-anchor="middle">4. ACTIVITY OR SPECIFICITY?</text>
+<text class="stage" x="1055" y="552" text-anchor="middle">4. ACTIVITY OR SPECIFICITY?</text>
+
+<g class="c-gray">
+<rect x="40" y="560" width="310" height="96" rx="10" stroke-width="0.6"/>
+</g>
+<text class="ts" x="195" y="578" text-anchor="middle">never pre-asked -- both run automatically</text>
+<rect x="65" y="592" width="260" height="16" fill="#9cc7ec"/>
+<text class="tss" x="195" y="600" text-anchor="middle" dominant-baseline="central" fill="#0C447C">activity (context model, 1 cell type)</text>
+<rect x="65" y="616" width="260" height="16" fill="#378ADD"/>
+<text class="tss" x="195" y="624" text-anchor="middle" dominant-baseline="central" fill="#fff">specificity (comparative, 2 cell types)</text>
+<text class="tss" x="195" y="646" text-anchor="middle">compared side by side (GC content etc.)</text>
+
+<g class="c-teal">
+<rect x="900" y="560" width="310" height="96" rx="10" stroke-width="0.6"/>
+</g>
+<text class="ts" x="1055" y="578" text-anchor="middle">never pre-asked -- both run automatically</text>
+<rect x="925" y="592" width="260" height="16" fill="#bfe9d8"/>
+<text class="tss" x="1055" y="600" text-anchor="middle" dominant-baseline="central" fill="#085041">activity (raw accessibility or motif importance)</text>
+<rect x="925" y="616" width="260" height="16" fill="#5DCAA5"/>
+<text class="tss" x="1055" y="624" text-anchor="middle" dominant-baseline="central" fill="#fff">specificity (difference between 2 cell types)</text>
+<text class="tss" x="1055" y="646" text-anchor="middle">compared side by side (GC content etc.)</text>
+
+<line class="arr" x1="195" y1="656" x2="195" y2="924" stroke="#378ADD"/>
+<line class="arr" x1="1055" y1="656" x2="1055" y2="924" stroke="#0F6E56"/>
+
+<!-- ============ OUTPUTS ============ -->
+<text class="stage" x="725" y="908" text-anchor="middle">OUTPUTS</text>
+
+<g class="c-purple">
+<rect x="40" y="924" width="310" height="150" rx="10" stroke-width="0.6"/>
+<text class="th" x="195" y="946" text-anchor="middle">Designed sequences</text>
+</g>
+<text class="ts" x="195" y="968" text-anchor="middle">has-ChIP-seq: per-TF context model,</text>
+<text class="ts" x="195" y="982" text-anchor="middle">real ChIP-seq-trained binding probability</text>
+<text class="tss" x="195" y="1010" text-anchor="middle">GC-content-matched, deduplicated,</text>
+<text class="tss" x="195" y="1022" text-anchor="middle">activity vs specificity compared visually</text>
+<text class="tss" x="195" y="1034" text-anchor="middle">(no target guessed in advance)</text>
+<text class="tss" x="195" y="1052" text-anchor="middle">e.g. ref_result/GATA2_design_report.md</text>
+
+<g class="c-purple">
+<rect x="470" y="924" width="310" height="150" rx="10" stroke-width="0.6"/>
+<text class="th" x="625" y="946" text-anchor="middle">Ranked candidate TFs + bubble plot</text>
+</g>
+<text class="tss" x="625" y="970" text-anchor="middle" font-family="ui-monospace,monospace">1  HNF4A   p&lt;1e-300</text>
+<text class="tss" x="625" y="984" text-anchor="middle" font-family="ui-monospace,monospace">2  FOXA2   p&lt;1e-300</text>
+<text class="tss" x="625" y="998" text-anchor="middle" font-family="ui-monospace,monospace">3  RXRB    p=2e-139</text>
+<circle cx="565" cy="1030" r="7" fill="#9B72D8" opacity="0.6"/>
+<circle cx="565" cy="1050" r="11" fill="#7c4fc0" opacity="0.75"/>
+<circle cx="685" cy="1030" r="10" fill="#c9a8f0" opacity="0.6"/>
+<circle cx="685" cy="1050" r="13" fill="#5c2e9e" opacity="0.8"/>
+<text class="tss" x="625" y="1068" text-anchor="middle">bubble = accessibility/TPM; every row's real TPM is also a CSV column</text>
+
+<g class="c-purple">
+<rect x="900" y="924" width="310" height="150" rx="10" stroke-width="0.6"/>
+<text class="th" x="1055" y="946" text-anchor="middle">Designed sequences</text>
+</g>
+<text class="ts" x="1055" y="968" text-anchor="middle">no-ChIP-seq: pretrained ChromBPNet,</text>
+<text class="ts" x="1055" y="982" text-anchor="middle">gradient-based motif importance if TF given</text>
+<text class="tss" x="1055" y="1010" text-anchor="middle">ChIP-seq-free proxy for "is this TF bound</text>
+<text class="tss" x="1055" y="1022" text-anchor="middle">here" -- input x gradient at the TF's best</text>
+<text class="tss" x="1055" y="1034" text-anchor="middle">PWM match, standing in for the classifier</text>
+<text class="tss" x="1055" y="1046" text-anchor="middle">the has-ChIP-seq branch trains on real data</text>
+<text class="tss" x="1055" y="1064" text-anchor="middle">no TF given: raw predicted accessibility instead</text>
+
+<g class="c-purple">
+<rect x="1230" y="924" width="200" height="150" rx="10" stroke-width="0.6"/>
+<text class="th" x="1330" y="946" text-anchor="middle">Scored regions</text>
+</g>
+<text class="ts" x="1330" y="968" text-anchor="middle">no-ChIP-seq "score" only</text>
+<text class="tss" x="1330" y="994" text-anchor="middle">real ATAC peaks, both cell types'</text>
+<text class="tss" x="1330" y="1006" text-anchor="middle">ChromBPNet scores + their diff,</text>
+<text class="tss" x="1330" y="1018" text-anchor="middle">annotated with top/bottom TF</text>
+<text class="tss" x="1330" y="1030" text-anchor="middle">motif matches</text>
+<text class="tss" x="1330" y="1052" text-anchor="middle">the only output that scores real</text>
+<text class="tss" x="1330" y="1064" text-anchor="middle">existing regions, not new ones</text>
+
+<!-- ============ WET-LAB HANDOFF (optional, off either branch's design output) ============ -->
+<path class="arr" d="M195 1074 C195 1120, 460 1150, 570 1170" stroke="#D89B3C"/>
+<path class="arr" d="M1055 1074 C1055 1120, 790 1150, 680 1170" stroke="#D89B3C"/>
+<text class="ts" x="625" y="1140" text-anchor="middle" fill="#8F6318">optional, either branch</text>
+
+<g class="c-amber">
+<rect x="395" y="1176" width="460" height="86" rx="10" stroke-width="0.6"/>
+<text class="th" x="625" y="1198" text-anchor="middle">Wet-lab handoff: esMPRA oligo library</text>
+</g>
+<text class="ts" x="625" y="1220" text-anchor="middle">tiled/trimmed to an array-synthesis length budget, adapters</text>
+<text class="ts" x="625" y="1233" text-anchor="middle">+ random barcode added, scrambled-sequence negative</text>
+<text class="tss" x="625" y="1250" text-anchor="middle">controls spiked in -- not validated against esMPRA's own source</text>
+
+<text class="tss" x="725" y="1272" text-anchor="middle">Every run is checkpointed and writes a fixed-schema manifest per step -- see EXPECTED_OUTPUTS.md and ref_result/RESULTS.md</text>
+</svg>
